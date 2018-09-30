@@ -1,0 +1,191 @@
+databaseChangeLog:
+  - changeSet:
+      id: author_table_creation
+      author: Yaroslav.Ivchenkov
+      changes:
+        - createTable:
+            tableName: authors
+            columns:
+              - column:
+                  name: author_id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: author_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_surname
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_country
+                  type: varchar(255)
+        - addUniqueConstraint:
+            tableName: authors
+            constraintName: name_surname_constraint
+            columnNames: author_name, author_surname
+  - changeSet:
+      id: genre_table_creation
+      author: Yaroslav.Ivchenkov
+      changes:
+        - createTable:
+            tableName: genres
+            columns:
+              - column:
+                  name: genre_id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: genre_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: book_table_creation
+      author: Yaroslav.Ivchenkov
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: book_id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: book_name
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: published_date
+                  type: date
+              - column:
+                  name: genre_id
+                  type: integer
+        - addForeignKeyConstraint:
+            baseColumnNames: genre_id
+            baseTableName: books
+            constraintName: fk_books_genres
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: genre_id
+            referencedTableName: genres
+  - changeSet:
+      id: books_part_table_creation
+      author: Yaroslav.Ivchenkov
+      changes:
+        - createTable:
+            tableName: parts
+            columns:
+              - column:
+                  name: book_book_id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: part_name
+                  type: varchar(255)
+              - column:
+                  name: part
+                  type: integer
+        - addForeignKeyConstraint:
+            baseColumnNames: book_book_id
+            baseTableName: parts
+            constraintName: fk_parts_book
+            onDelete: CASCADE
+            referencedColumnNames: book_id
+            referencedTableName: books
+  - changeSet:
+      id: books_authors_link_creatin
+      author: Yaroslav.Ivchenkov
+      changes:
+        - createTable:
+            tableName: book_author
+            columns:
+              - column:
+                  name: book_id
+                  type: integer
+              - column:
+                  name: author_id
+                  type: integer
+        - addPrimaryKey:
+            columnNames: book_id, author_id
+            constraintName: book_author_pkey
+            tableName: book_author
+        - addForeignKeyConstraint:
+            baseColumnNames: book_id
+            baseTableName: book_author
+            constraintName: fk_book
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: book_id
+            referencedTableName: books
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: book_author
+            constraintName: fk_author
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: author_id
+            referencedTableName: authors
+  - changeSet:
+      id: comments_table_creation
+      author: Yaroslav.Ivchenkov
+      changes:
+        - createTable:
+            tableName: comments
+            columns:
+              - column:
+                  name: comment_id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: comment
+                  type: varchar(400)
+              - column:
+                  name: username
+                  type: varchar(200)
+        - createTable:
+            tableName: comment_book
+            columns:
+              - column:
+                  name: comment_id
+                  type: integer
+              - column:
+                  name: book_id
+                  type: integer
+        - addPrimaryKey:
+            columnNames: comment_id, book_id
+            constraintName: comment_book_pkey
+            tableName: comment_book
+        - addForeignKeyConstraint:
+            baseColumnNames: comment_id
+            baseTableName: comment_book
+            constraintName: fk_column
+            onDelete: CASCADE
+            referencedColumnNames: comment_id
+            referencedTableName: comments
+        - addForeignKeyConstraint:
+            baseColumnNames: book_id
+            baseTableName: comment_book
+            constraintName: fk_book
+            onDelete: CASCADE
+            referencedColumnNames: book_id
+            referencedTableName: books
+
